@@ -14,17 +14,17 @@ class NumberSelector extends StatefulWidget {
 
   /// Startindex of selector
   /// If not set, the selector will start at 0
-  final int start;
+  final int current;
 
   /// The amount every increment/decrement will be
   /// Default is 1
   final int step;
 
   /// Callback on number change
-  final Function(int number)? onNumberChange;
+  final Function(int number)? onUpdate;
 
   /// Selector height
-  /// Default is 50.0 px
+  /// Default is 36.0 px
   final double height;
 
   /// Selector width
@@ -36,8 +36,12 @@ class NumberSelector extends StatefulWidget {
   final double borderRadius;
 
   /// Selector border color
-  /// Default is Colors.grey
+  /// Default is Colors.black26
   final Color borderColor;
+
+  /// Devider color
+  /// Default is Colors.black12
+  final Color deviderColor;
 
   /// Selector background color
   /// Default is Colors.white
@@ -58,18 +62,24 @@ class NumberSelector extends StatefulWidget {
   /// The spacing between the number and the buttons
   final double contentPadding;
 
+  /// The spacing between vertical deviders and the main container
+  /// Default is 5.0 px
+  final double verticalDeviderPadding;
+
   const NumberSelector({
     super.key,
     this.max,
     this.min,
     this.step = 1,
-    this.onNumberChange,
-    this.start = 0,
+    this.onUpdate,
+    this.current = 0,
     this.height = 50.0,
-    this.width = 324.0,
+    this.width = 350.0,
     this.contentPadding = 20.0,
+    this.verticalDeviderPadding = 5.0,
     this.borderRadius = 2.0,
-    this.borderColor = Colors.grey,
+    this.borderColor = Colors.black26,
+    this.deviderColor = Colors.black12,
     this.backgroundColor = Colors.white,
     this.borderWidth = 1.0,
     this.iconColor = Colors.black54,
@@ -82,21 +92,16 @@ class NumberSelector extends StatefulWidget {
 
 class _NumberSelectorState extends State<NumberSelector> {
   final _focusNode = FocusNode();
+  late int _current;
   late final TextEditingController _controller;
 
   @override
   void initState() {
-    _controller = TextEditingController(text: widget.start.toString());
+    _current = widget.current;
+    _controller = TextEditingController(text: widget.current.toString());
 
     _focusNode.addListener(() {
-      if (!_focusNode.hasFocus) {
-        if (_controller.text != '') {
-          _update(_controller.text);
-        } else {
-          _controller.text = '${widget.start}';
-          _update(_controller.text);
-        }
-      }
+      if (!_focusNode.hasFocus) _update();
     });
 
     _focusNode.onKeyEvent = (_, event) {
@@ -132,7 +137,7 @@ class _NumberSelectorState extends State<NumberSelector> {
               enabled: _isDecementEnabled,
               icon: const Icon(Icons.first_page),
               iconColor: widget.iconColor,
-              onPressed: () => _toMin(),
+              onPressed: () => _minMax(true),
             ),
             _devider(),
           ],
@@ -143,7 +148,7 @@ class _NumberSelectorState extends State<NumberSelector> {
             enabled: _isDecementEnabled,
             icon: const Icon(Icons.chevron_left),
             iconColor: widget.iconColor,
-            onPressed: () => _decrement(),
+            onPressed: () => _icrementDecrement(false),
           ),
           _devider(),
           Expanded(
@@ -157,7 +162,7 @@ class _NumberSelectorState extends State<NumberSelector> {
             enabled: _isIncrementEnabled,
             icon: const Icon(Icons.chevron_right),
             iconColor: widget.iconColor,
-            onPressed: () => _increment(),
+            onPressed: () => _icrementDecrement(true),
           ),
           if (widget.max != null) ...[
             _devider(),
@@ -167,7 +172,7 @@ class _NumberSelectorState extends State<NumberSelector> {
               enabled: _isIncrementEnabled,
               icon: const Icon(Icons.last_page),
               iconColor: widget.iconColor,
-              onPressed: () => _toMax(),
+              onPressed: () => _minMax(false),
             ),
           ],
         ],
@@ -180,10 +185,10 @@ class _NumberSelectorState extends State<NumberSelector> {
       controller: _controller,
       focusNode: _focusNode,
       decoration: InputDecoration(
-        hintText: '${widget.start}',
+        hintText: '$_current',
         suffixText:
             widget.max != null ? '${widget.perfixNaming} ${widget.max}' : null,
-        contentPadding: EdgeInsets.all(widget.contentPadding),
+        contentPadding: EdgeInsets.symmetric(horizontal: widget.contentPadding),
         border: InputBorder.none,
       ),
       keyboardType: TextInputType.number,
@@ -193,51 +198,43 @@ class _NumberSelectorState extends State<NumberSelector> {
     );
   }
 
-  VerticalDivider _devider() {
-    return VerticalDivider(
-      width: widget.borderWidth,
-      thickness: widget.borderWidth,
-      color: widget.borderColor,
+  Widget _devider() {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: widget.verticalDeviderPadding),
+      child: VerticalDivider(
+        width: widget.borderWidth,
+        thickness: widget.borderWidth,
+        color: widget.deviderColor,
+      ),
     );
   }
 
-  void _toMin() {
+  void _minMax(bool isMin) {
     setState(() {
-      _controller.text = widget.min.toString();
-      widget.onNumberChange?.call(int.parse(_controller.text));
+      _current = (isMin ? widget.min : widget.max) ?? widget.current;
+      _controller.text = '$_current';
+      widget.onUpdate?.call(_parcedText);
     });
   }
 
-  void _toMax() {
+  void _update() {
     setState(() {
-      _controller.text = widget.max.toString();
-      widget.onNumberChange?.call(int.parse(_controller.text));
+      if (_controller.text.isEmpty) {
+        _controller.text = '$_parcedText';
+      } else {
+        _current = _clamp(_parcedText);
+        _controller.text = '$_current';
+        widget.onUpdate?.call(_current);
+      }
     });
   }
 
-  void _update(String value) {
+  void _icrementDecrement(bool isIncrement) {
     setState(() {
-      final newValue = _toMinMaxValue(int.parse(value));
-      _controller.text = '$newValue';
-      widget.onNumberChange?.call(newValue);
-    });
-  }
-
-  void _increment() {
-    setState(() {
-      final newValue =
-          _toMinMaxValue(int.parse(_controller.text) + widget.step);
-      _controller.text = '$newValue';
-      widget.onNumberChange?.call(newValue);
-    });
-  }
-
-  void _decrement() {
-    setState(() {
-      final newValue =
-          _toMinMaxValue(int.parse(_controller.text) - widget.step);
-      _controller.text = '$newValue';
-      widget.onNumberChange?.call(newValue);
+      _current =
+          _clamp(_parcedText + (isIncrement ? widget.step : -widget.step));
+      _controller.text = '$_current';
+      widget.onUpdate?.call(_current);
     });
   }
 
@@ -247,10 +244,9 @@ class _NumberSelectorState extends State<NumberSelector> {
   bool get _isIncrementEnabled =>
       (widget.max != null && _parcedText < widget.max!) || widget.max == null;
 
-  int get _parcedText =>
-      _controller.text.isNotEmpty ? int.parse(_controller.text) : widget.start;
+  int get _parcedText => int.tryParse(_controller.text) ?? _current;
 
-  int _toMinMaxValue(int number) {
+  int _clamp(int number) {
     widget.min != null ? number = max(number, widget.min!) : number;
     widget.max != null ? number = min(number, widget.max!) : number;
     return number;

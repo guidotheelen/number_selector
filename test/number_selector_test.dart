@@ -6,7 +6,7 @@ void main() {
   group('$NumberSelector', () {
     const min = 1;
     const max = 20;
-    const start = 10;
+    const current = 10;
 
     late Widget numberSelector;
     late int callbackCounter;
@@ -18,10 +18,10 @@ void main() {
       numberSelector = MaterialApp(
         home: Material(
           child: NumberSelector(
-            start: start,
+            current: current,
             min: min,
             max: max,
-            onNumberChange: (value) {
+            onUpdate: (value) {
               callbackValue = value;
               callbackCounter++;
             },
@@ -34,7 +34,7 @@ void main() {
       await tester.pumpWidget(numberSelector);
 
       expect(find.byType(TextField), findsOneWidget);
-      expect(find.text('$start'), findsNWidgets(2));
+      expect(find.text('$current'), findsNWidgets(2));
       expect(incrementFinder, findsOneWidget);
       expect(decrementFinder, findsOneWidget);
     });
@@ -47,7 +47,7 @@ void main() {
         await tester.pump();
 
         expect(callbackCounter, 1);
-        expect(callbackValue, start + 1);
+        expect(callbackValue, current + 1);
       });
 
       testWidgets('decrement current number', (tester) async {
@@ -57,15 +57,15 @@ void main() {
         await tester.pump();
 
         expect(callbackCounter, 1);
-        expect(callbackValue, start - 1);
+        expect(callbackValue, current - 1);
       });
 
       testWidgets('do not exceed min when current is min', (tester) async {
         numberSelector = MaterialApp(
           home: Material(
             child: NumberSelector(
-              start: min,
-              onNumberChange: (value) {
+              current: min,
+              onUpdate: (value) {
                 callbackValue = value;
                 callbackCounter++;
               },
@@ -86,8 +86,8 @@ void main() {
         numberSelector = MaterialApp(
           home: Material(
             child: NumberSelector(
-              start: max,
-              onNumberChange: (value) {
+              current: max,
+              onUpdate: (value) {
                 callbackValue = value;
                 callbackCounter++;
               },
