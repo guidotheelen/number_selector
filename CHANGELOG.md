@@ -10,3 +10,8 @@
 * Reset on ESC
 * Safely parse numbers
 * More styling variables
+
+## 0.0.3
+
+* Remove borders from TextField
+* Make TextField dense

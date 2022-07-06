@@ -190,6 +190,9 @@ class _NumberSelectorState extends State<NumberSelector> {
             widget.max != null ? '${widget.perfixNaming} ${widget.max}' : null,
         contentPadding: EdgeInsets.symmetric(horizontal: widget.contentPadding),
         border: InputBorder.none,
+        enabledBorder: InputBorder.none,
+        focusedBorder: InputBorder.none,
+        isDense: true,
       ),
       keyboardType: TextInputType.number,
       inputFormatters: [
