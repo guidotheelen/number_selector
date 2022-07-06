@@ -8,11 +8,11 @@ NumberSelector is a customizable widget designed for choosing an integer number 
 
 ### Number selector with minimum and maximum value
 
-![Test pyramid](images/picker.png)
+![Number selector with min and max](images/picker.png)
 
 ### simple number selector
 
-![Test pyramid](images/picker2.png)
+![Simple number selector](images/picker2.png)
 
 
 ## Usage
