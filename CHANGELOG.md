@@ -19,3 +19,7 @@
 ## 0.0.4
 
 * Enable / Disable Widget
+
+## 0.0.5
+
+* Fix lose focus when widget is disabled
