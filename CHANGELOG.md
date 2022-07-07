@@ -15,3 +15,7 @@
 
 * Remove borders from TextField
 * Make TextField dense
+
+## 0.0.4
+
+* Enable / Disable Widget

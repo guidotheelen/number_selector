@@ -20,6 +20,9 @@ class NumberSelector extends StatefulWidget {
   /// Default is 1
   final int step;
 
+  /// Provide false to disable the entire selector
+  final bool enabled;
+
   /// Callback on number change
   final Function(int number)? onUpdate;
 
@@ -71,6 +74,7 @@ class NumberSelector extends StatefulWidget {
     this.max,
     this.min,
     this.step = 1,
+    this.enabled = true,
     this.onUpdate,
     this.current = 0,
     this.height = 50.0,
@@ -180,7 +184,7 @@ class _NumberSelectorState extends State<NumberSelector> {
     );
   }
 
-  TextField _numberField() {
+  Widget _numberField() {
     return TextField(
       controller: _controller,
       focusNode: _focusNode,
@@ -198,6 +202,7 @@ class _NumberSelectorState extends State<NumberSelector> {
       inputFormatters: [
         FilteringTextInputFormatter.allow(RegExp(r'[0-9-]')),
       ],
+      enabled: widget.enabled,
     );
   }
 
@@ -242,10 +247,12 @@ class _NumberSelectorState extends State<NumberSelector> {
   }
 
   bool get _isDecementEnabled =>
-      (widget.min != null && _parcedText > widget.min!) || widget.min == null;
+      widget.enabled && (widget.min != null && _parcedText > widget.min!) ||
+      widget.min == null;
 
   bool get _isIncrementEnabled =>
-      (widget.max != null && _parcedText < widget.max!) || widget.max == null;
+      widget.enabled && (widget.max != null && _parcedText < widget.max!) ||
+      widget.max == null;
 
   int get _parcedText => int.tryParse(_controller.text) ?? _current;
 
