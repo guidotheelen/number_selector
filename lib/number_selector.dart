@@ -96,8 +96,10 @@ class NumberSelector extends StatefulWidget {
 
 class _NumberSelectorState extends State<NumberSelector> {
   late final FocusNode _focusNode;
-  late int _current;
   late final TextEditingController _controller;
+
+  late int _current;
+  bool _isCanceled = false;
 
   @override
   void initState() {
@@ -111,6 +113,7 @@ class _NumberSelectorState extends State<NumberSelector> {
 
     _focusNode.onKeyEvent = (_, event) {
       if (event.logicalKey == LogicalKeyboardKey.escape) {
+        _isCanceled = true;
         _focusNode.unfocus();
         return KeyEventResult.handled;
       }
@@ -227,7 +230,15 @@ class _NumberSelectorState extends State<NumberSelector> {
   }
 
   void _update() {
-    if (_controller.text == '$_current') return;
+    if (_isCanceled) {
+      _isCanceled = false;
+      _controller.text = '$_current';
+      return;
+    }
+    if (_clamp(_parcedText) == _current) {
+      _controller.text = '$_current';
+      return;
+    }
     setState(() {
       if (_controller.text.isEmpty) {
         _controller.text = '$_parcedText';

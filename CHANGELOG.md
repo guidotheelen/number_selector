@@ -31,3 +31,7 @@
 ## 0.0.7
 
 * Ignore same input
+
+## 0.0.8
+
+* Cancel input on ESC
