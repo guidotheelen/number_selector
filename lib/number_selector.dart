@@ -95,13 +95,14 @@ class NumberSelector extends StatefulWidget {
 }
 
 class _NumberSelectorState extends State<NumberSelector> {
-  final _focusNode = FocusNode();
+  late final FocusNode _focusNode;
   late int _current;
   late final TextEditingController _controller;
 
   @override
   void initState() {
     _current = widget.current;
+    _focusNode = FocusNode(canRequestFocus: widget.enabled);
     _controller = TextEditingController(text: widget.current.toString());
 
     _focusNode.addListener(() {

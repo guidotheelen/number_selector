@@ -23,3 +23,7 @@
 ## 0.0.5
 
 * Fix lose focus when widget is disabled
+
+## 0.0.6
+
+* Don't allow focus when widget is disabled
