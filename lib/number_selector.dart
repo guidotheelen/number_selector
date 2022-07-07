@@ -227,6 +227,7 @@ class _NumberSelectorState extends State<NumberSelector> {
   }
 
   void _update() {
+    if (_controller.text == '$_current') return;
     setState(() {
       if (_controller.text.isEmpty) {
         _controller.text = '$_parcedText';

@@ -107,7 +107,7 @@ void main() {
 
     group('text field', () {
       testWidgets('updates current number by input', (tester) async {
-        const input = 10;
+        const input = 15;
         await tester.pumpWidget(numberSelector);
 
         await tester.tap(inputFinder);
@@ -117,6 +117,18 @@ void main() {
 
         expect(callbackCounter, 1);
         expect(callbackValue, input);
+      });
+
+      testWidgets('ignores same input', (tester) async {
+        const input = 10;
+        await tester.pumpWidget(numberSelector);
+
+        await tester.tap(inputFinder);
+        await tester.enterText(inputFinder, '$input');
+        await tester.testTextInput.receiveAction(TextInputAction.done);
+        await tester.pump();
+
+        expect(callbackCounter, 0);
       });
 
       testWidgets('ignores empty input', (tester) async {

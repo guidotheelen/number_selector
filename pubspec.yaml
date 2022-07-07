@@ -1,6 +1,6 @@
 name: number_selector
 description: A custom widget designed for choosing an integer number by buttons or textfield.
-version: 0.0.6
+version: 0.0.7
 homepage: https://github.com/guidotheelen/number_selector
 
 environment:

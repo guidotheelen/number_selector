@@ -27,3 +27,7 @@
 ## 0.0.6
 
 * Don't allow focus when widget is disabled
+
+## 0.0.7
+
+* Ignore same input
