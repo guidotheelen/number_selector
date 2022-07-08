@@ -69,6 +69,18 @@ class NumberSelector extends StatefulWidget {
   /// Default is true
   final bool showMinMax;
 
+  /// Show suffix if max is set
+  /// Default is true
+  final bool showSuffix;
+
+  /// Center text in the textfield
+  /// Default is false
+  final bool hasCenteredText;
+
+  /// Show or hide the lines between the buttons
+  /// Default is true
+  final bool hasDividers;
+
   /// The String displayed before the max number in the textField
   /// Default is 'of'
   final String prefixNaming;
@@ -103,6 +115,9 @@ class NumberSelector extends StatefulWidget {
     this.maxIcon = Icons.last_page,
     this.minIcon = Icons.first_page,
     this.showMinMax = true,
+    this.showSuffix = true,
+    this.hasCenteredText = false,
+    this.hasDividers = true,
     this.hasBorder = true,
     this.prefixNaming = 'of',
   });
@@ -210,19 +225,20 @@ class _NumberSelectorState extends State<NumberSelector> {
   }
 
   Widget _numberField() {
+    var showSuffix = widget.max != null && widget.showSuffix;
     return TextField(
       controller: _controller,
       focusNode: _focusNode,
       decoration: InputDecoration(
         hintText: '$_current',
-        suffixText:
-            widget.max != null ? '${widget.prefixNaming} ${widget.max}' : null,
+        suffixText: showSuffix ? '${widget.prefixNaming} ${widget.max}' : null,
         contentPadding: EdgeInsets.symmetric(horizontal: widget.contentPadding),
         border: InputBorder.none,
         enabledBorder: InputBorder.none,
         focusedBorder: InputBorder.none,
         isDense: true,
       ),
+      textAlign: widget.hasCenteredText ? TextAlign.center : TextAlign.start,
       keyboardType: TextInputType.number,
       inputFormatters: [
         FilteringTextInputFormatter.allow(RegExp(r'[0-9-]')),
@@ -231,22 +247,32 @@ class _NumberSelectorState extends State<NumberSelector> {
     );
   }
 
-  Widget _divider() {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: widget.verticalDividerPadding),
-      child: VerticalDivider(
-        width: widget.borderWidth,
-        thickness: widget.borderWidth,
-        color: widget.dividerColor,
-      ),
-    );
-  }
+  Widget _divider() => widget.hasDividers
+      ? Padding(
+          padding:
+              EdgeInsets.symmetric(vertical: widget.verticalDividerPadding),
+          child: VerticalDivider(
+            width: widget.borderWidth,
+            thickness: widget.borderWidth,
+            color: widget.dividerColor,
+          ),
+        )
+      : const SizedBox();
 
   void _minMax(bool isMin) {
     setState(() {
       _current = (isMin ? widget.min : widget.max) ?? widget.current;
       _controller.text = '$_current';
       widget.onUpdate?.call(_parcedText);
+    });
+  }
+
+  void _incrementDecrement(bool isIncrement) {
+    setState(() {
+      _current =
+          _clamp(_parcedText + (isIncrement ? widget.step : -widget.step));
+      _controller.text = '$_current';
+      widget.onUpdate?.call(_current);
     });
   }
 
@@ -260,24 +286,13 @@ class _NumberSelectorState extends State<NumberSelector> {
       _controller.text = '$_current';
       return;
     }
-    setState(() {
-      if (_controller.text.isEmpty) {
-        _controller.text = '$_parcedText';
-      } else {
-        _current = _clamp(_parcedText);
-        _controller.text = '$_current';
-        widget.onUpdate?.call(_current);
-      }
-    });
-  }
-
-  void _incrementDecrement(bool isIncrement) {
-    setState(() {
-      _current =
-          _clamp(_parcedText + (isIncrement ? widget.step : -widget.step));
+    if (_controller.text.isEmpty) {
+      _controller.text = '$_parcedText';
+    } else {
+      _current = _clamp(_parcedText);
       _controller.text = '$_current';
       widget.onUpdate?.call(_current);
-    });
+    }
   }
 
   bool get _isDecementEnabled =>

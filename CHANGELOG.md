@@ -35,3 +35,11 @@
 ## 0.0.8
 
 * Cancel input on ESC
+
+## 1.0.0
+
+* Removable border
+* Removable dividers
+* Only set state when needed
+* Additional tests
+* Code cleanup

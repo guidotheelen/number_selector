@@ -208,6 +208,30 @@ void main() {
         expect(updateCounter, 0);
       });
 
+      testWidgets('click decrement with empty input', (tester) async {
+        await tester.pumpWidget(numberSelector);
+
+        await tester.tap(inputFinder);
+        await tester.enterText(inputFinder, '');
+        await tester.tap(decrementFinder);
+        await tester.pump();
+
+        expect(updateCounter, 1);
+        expect(find.text('${current - 1}'), findsNWidgets(2));
+      });
+
+      testWidgets('click increment with empty input', (tester) async {
+        await tester.pumpWidget(numberSelector);
+
+        await tester.tap(inputFinder);
+        await tester.enterText(inputFinder, '');
+        await tester.tap(incrementFinder);
+        await tester.pump();
+
+        expect(updateCounter, 1);
+        expect(find.text('${current + 1}'), findsNWidgets(2));
+      });
+
       testWidgets('resets on ESC', (tester) async {
         const input = 15;
         await tester.pumpWidget(numberSelector);
