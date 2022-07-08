@@ -44,7 +44,7 @@ class NumberSelector extends StatefulWidget {
 
   /// Devider color
   /// Default is Colors.black12
-  final Color deviderColor;
+  final Color dividerColor;
 
   /// Selector background color
   /// Default is Colors.white
@@ -60,14 +60,14 @@ class NumberSelector extends StatefulWidget {
 
   /// The String displayed before the max number in the textField
   /// Default is 'of'
-  final String perfixNaming;
+  final String prefixNaming;
 
   /// The spacing between the number and the buttons
   final double contentPadding;
 
   /// The spacing between vertical deviders and the main container
   /// Default is 5.0 px
-  final double verticalDeviderPadding;
+  final double verticalDividerPadding;
 
   const NumberSelector({
     super.key,
@@ -80,14 +80,14 @@ class NumberSelector extends StatefulWidget {
     this.height = 50.0,
     this.width = 350.0,
     this.contentPadding = 20.0,
-    this.verticalDeviderPadding = 5.0,
+    this.verticalDividerPadding = 5.0,
     this.borderRadius = 2.0,
     this.borderColor = Colors.black26,
-    this.deviderColor = Colors.black12,
+    this.dividerColor = Colors.black12,
     this.backgroundColor = Colors.white,
     this.borderWidth = 1.0,
     this.iconColor = Colors.black54,
-    this.perfixNaming = 'of',
+    this.prefixNaming = 'of',
   });
 
   @override
@@ -197,7 +197,7 @@ class _NumberSelectorState extends State<NumberSelector> {
       decoration: InputDecoration(
         hintText: '$_current',
         suffixText:
-            widget.max != null ? '${widget.perfixNaming} ${widget.max}' : null,
+            widget.max != null ? '${widget.prefixNaming} ${widget.max}' : null,
         contentPadding: EdgeInsets.symmetric(horizontal: widget.contentPadding),
         border: InputBorder.none,
         enabledBorder: InputBorder.none,
@@ -214,11 +214,11 @@ class _NumberSelectorState extends State<NumberSelector> {
 
   Widget _devider() {
     return Padding(
-      padding: EdgeInsets.symmetric(vertical: widget.verticalDeviderPadding),
+      padding: EdgeInsets.symmetric(vertical: widget.verticalDividerPadding),
       child: VerticalDivider(
         width: widget.borderWidth,
         thickness: widget.borderWidth,
-        color: widget.deviderColor,
+        color: widget.dividerColor,
       ),
     );
   }

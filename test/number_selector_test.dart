@@ -204,6 +204,18 @@ void main() {
         expect(find.text('$current'), findsNWidgets(2));
       });
 
+      testWidgets('resets on ESC when input is empty', (tester) async {
+        await tester.pumpWidget(numberSelector);
+
+        await tester.tap(inputFinder);
+        await tester.enterText(inputFinder, '');
+        await simulateKeyDownEvent(LogicalKeyboardKey.escape);
+        await tester.pump();
+
+        expect(updateCounter, 0);
+        expect(find.text('$current'), findsNWidgets(2));
+      });
+
       testWidgets('updates to max when input exceeds max', (tester) async {
         await tester.pumpWidget(numberSelector);
 
