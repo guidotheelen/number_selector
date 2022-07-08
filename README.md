@@ -1,4 +1,6 @@
-NumberSelector is a customizable widget designed for choosing an integer number by buttons or TextField.
+# NumberSelector [![Build Status](https://app.travis-ci.com/guidotheelen/number_selector.svg?branch=master)](guidotheelen/number_selector)
+
+ Customizable widget designed for choosing an integer number by buttons or TextField.
 
 ## Features
 
