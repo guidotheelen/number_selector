@@ -104,8 +104,8 @@ class _NumberSelectorState extends State<NumberSelector> {
   @override
   void initState() {
     _current = widget.current;
-    _focusNode = FocusNode(canRequestFocus: widget.enabled);
-    _controller = TextEditingController(text: widget.current.toString());
+    _focusNode = FocusNode();
+    _controller = TextEditingController(text: '${widget.current}');
 
     _focusNode.addListener(() {
       if (!_focusNode.hasFocus && widget.enabled) _update();

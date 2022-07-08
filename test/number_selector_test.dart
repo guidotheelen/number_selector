@@ -126,6 +126,20 @@ void main() {
 
         expect(updateCounter, 0);
       });
+
+      testWidgets('do not show min/max', (tester) async {
+        numberSelector = const MaterialApp(
+          home: Material(
+            child: NumberSelector(
+              current: current,
+            ),
+          ),
+        );
+        await tester.pumpWidget(numberSelector);
+
+        expect(maxFinder, findsNothing);
+        expect(minFinder, findsNothing);
+      });
     });
 
     group('text field', () {
