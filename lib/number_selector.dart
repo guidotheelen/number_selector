@@ -26,37 +26,48 @@ class NumberSelector extends StatefulWidget {
   /// Callback on number change
   final Function(int number)? onUpdate;
 
-  /// Selector height
   /// Default is 36.0 px
   final double height;
 
-  /// Selector width
   /// Default to 324.0 px. Provide null to expand to parent width
   final double? width;
 
-  /// Selector border radius
   /// Default is 2.0 px
   final double borderRadius;
 
-  /// Selector border color
   /// Default is Colors.black26
   final Color borderColor;
 
-  /// Devider color
   /// Default is Colors.black12
   final Color dividerColor;
 
-  /// Selector background color
   /// Default is Colors.white
   final Color backgroundColor;
 
-  /// Selector border width
   /// Default is 1.0 px
   final double borderWidth;
 
-  /// Selector increment/decrement icon colors
+  /// Shows or hides the outline of the selector
+  final bool hasBorder;
+
   /// Default is Colors.black54
   final Color iconColor;
+
+  /// Increment icon
+  final IconData incrementIcon;
+
+  /// Decrement icon
+  final IconData decrementIcon;
+
+  /// Maximal number icon
+  final IconData maxIcon;
+
+  /// Minimal number icon
+  final IconData minIcon;
+
+  /// Show min and max buttons if min and max are set
+  /// Default is true
+  final bool showMinMax;
 
   /// The String displayed before the max number in the textField
   /// Default is 'of'
@@ -87,6 +98,12 @@ class NumberSelector extends StatefulWidget {
     this.backgroundColor = Colors.white,
     this.borderWidth = 1.0,
     this.iconColor = Colors.black54,
+    this.incrementIcon = Icons.chevron_right,
+    this.decrementIcon = Icons.chevron_left,
+    this.maxIcon = Icons.last_page,
+    this.minIcon = Icons.first_page,
+    this.showMinMax = true,
+    this.hasBorder = true,
     this.prefixNaming = 'of',
   });
 
@@ -129,58 +146,60 @@ class _NumberSelectorState extends State<NumberSelector> {
       height: widget.height,
       width: widget.width,
       decoration: BoxDecoration(
-        border: Border.all(
-          color: widget.borderColor,
-          width: widget.borderWidth,
-        ),
+        border: widget.hasBorder
+            ? Border.all(
+                color: widget.borderColor,
+                width: widget.borderWidth,
+              )
+            : null,
         borderRadius: BorderRadius.circular(widget.borderRadius),
         color: widget.backgroundColor,
       ),
       child: Row(
         children: [
-          if (widget.min != null) ...[
+          if (widget.min != null && widget.showMinMax) ...[
             _NaviagtionButton(
               key: const Key('Min'),
               height: widget.height,
               width: widget.height,
               enabled: _isDecementEnabled,
-              icon: const Icon(Icons.first_page),
+              icon: Icon(widget.minIcon),
               iconColor: widget.iconColor,
               onPressed: () => _minMax(true),
             ),
-            _devider(),
+            _divider(),
           ],
           _NaviagtionButton(
             key: const Key('Decrement'),
             height: widget.height,
             width: widget.height,
             enabled: _isDecementEnabled,
-            icon: const Icon(Icons.chevron_left),
+            icon: Icon(widget.decrementIcon),
             iconColor: widget.iconColor,
             onPressed: () => _incrementDecrement(false),
           ),
-          _devider(),
+          _divider(),
           Expanded(
             child: _numberField(),
           ),
-          _devider(),
+          _divider(),
           _NaviagtionButton(
             key: const Key('Increment'),
             height: widget.height,
             width: widget.height,
             enabled: _isIncrementEnabled,
-            icon: const Icon(Icons.chevron_right),
+            icon: Icon(widget.incrementIcon),
             iconColor: widget.iconColor,
             onPressed: () => _incrementDecrement(true),
           ),
-          if (widget.max != null) ...[
-            _devider(),
+          if (widget.max != null && widget.showMinMax) ...[
+            _divider(),
             _NaviagtionButton(
               key: const Key('Max'),
               height: widget.height,
               width: widget.height,
               enabled: _isIncrementEnabled,
-              icon: const Icon(Icons.last_page),
+              icon: Icon(widget.maxIcon),
               iconColor: widget.iconColor,
               onPressed: () => _minMax(false),
             ),
@@ -212,7 +231,7 @@ class _NumberSelectorState extends State<NumberSelector> {
     );
   }
 
-  Widget _devider() {
+  Widget _divider() {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: widget.verticalDividerPadding),
       child: VerticalDivider(

@@ -127,11 +127,28 @@ void main() {
         expect(updateCounter, 0);
       });
 
-      testWidgets('do not show min/max', (tester) async {
+      testWidgets('do not show min/max if not set', (tester) async {
         numberSelector = const MaterialApp(
           home: Material(
             child: NumberSelector(
               current: current,
+            ),
+          ),
+        );
+        await tester.pumpWidget(numberSelector);
+
+        expect(maxFinder, findsNothing);
+        expect(minFinder, findsNothing);
+      });
+
+      testWidgets('do not show min/max if turned off', (tester) async {
+        numberSelector = const MaterialApp(
+          home: Material(
+            child: NumberSelector(
+              current: current,
+              max: 200,
+              min: 0,
+              showMinMax: false,
             ),
           ),
         );
