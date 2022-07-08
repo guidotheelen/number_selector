@@ -213,6 +213,18 @@ void main() {
         expect(updateCounter, 1);
         expect(updateValue, min);
       });
+
+      testWidgets('does not accept letters', (tester) async {
+        await tester.pumpWidget(numberSelector);
+
+        await tester.tap(inputFinder);
+        await tester.enterText(inputFinder, 'a');
+        await tester.testTextInput.receiveAction(TextInputAction.done);
+        await tester.pump();
+
+        expect(updateCounter, 0);
+        expect(find.text('$current'), findsNWidgets(2));
+      });
     });
   });
 }
