@@ -1,4 +1,4 @@
-# NumberSelector [![Build Status](https://app.travis-ci.com/guidotheelen/number_selector.svg?branch=master)](guidotheelen/number_selector)
+# NumberSelector [![Build Status](https://app.travis-ci.com/guidotheelen/number_selector.svg?branch=master)](guidotheelen/number_selector)[![Coverage Status](https://coveralls.io/repos/github/guidotheelen/number_selector/badge.svg?branch=master)](https://coveralls.io/github/guidotheelen/number_selector?branch=master)
 
  Customizable widget designed for choosing an integer number by buttons or TextField.
 
