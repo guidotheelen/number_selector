@@ -270,8 +270,8 @@ class _NumberSelectorState extends State<NumberSelector> {
   int get _parcedText => int.tryParse(_controller.text) ?? _current;
 
   int _clamp(int number) {
-    widget.min != null ? number = max(number, widget.min!) : number;
-    widget.max != null ? number = min(number, widget.max!) : number;
+    if (widget.min != null) number = max(number, widget.min!);
+    if (widget.max != null) number = min(number, widget.max!);
     return number;
   }
 }
