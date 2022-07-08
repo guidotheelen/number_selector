@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:number_selector/number_selector.dart';
 
@@ -9,12 +10,12 @@ void main() {
     const current = 10;
 
     late Widget numberSelector;
-    late int callbackCounter;
-    late int callbackValue;
+    late int updateCounter;
+    late int updateValue;
 
     setUp(() async {
-      callbackCounter = 0;
-      callbackValue = 0;
+      updateCounter = 0;
+      updateValue = 0;
       numberSelector = MaterialApp(
         home: Material(
           child: NumberSelector(
@@ -22,8 +23,8 @@ void main() {
             min: min,
             max: max,
             onUpdate: (value) {
-              callbackValue = value;
-              callbackCounter++;
+              updateValue = value;
+              updateCounter++;
             },
           ),
         ),
@@ -46,8 +47,8 @@ void main() {
         await tester.tap(incrementFinder);
         await tester.pump();
 
-        expect(callbackCounter, 1);
-        expect(callbackValue, current + 1);
+        expect(updateCounter, 1);
+        expect(updateValue, current + 1);
       });
 
       testWidgets('decrement current number', (tester) async {
@@ -56,8 +57,28 @@ void main() {
         await tester.tap(decrementFinder);
         await tester.pump();
 
-        expect(callbackCounter, 1);
-        expect(callbackValue, current - 1);
+        expect(updateCounter, 1);
+        expect(updateValue, current - 1);
+      });
+
+      testWidgets('turn current number into max', (tester) async {
+        await tester.pumpWidget(numberSelector);
+
+        await tester.tap(maxFinder);
+        await tester.pump();
+
+        expect(updateCounter, 1);
+        expect(updateValue, max);
+      });
+
+      testWidgets('turn current number into min', (tester) async {
+        await tester.pumpWidget(numberSelector);
+
+        await tester.tap(minFinder);
+        await tester.pump();
+
+        expect(updateCounter, 1);
+        expect(updateValue, min);
       });
 
       testWidgets('do not exceed min when current is min', (tester) async {
@@ -66,8 +87,8 @@ void main() {
             child: NumberSelector(
               current: min,
               onUpdate: (value) {
-                callbackValue = value;
-                callbackCounter++;
+                updateValue = value;
+                updateCounter++;
               },
               min: min,
               max: max,
@@ -77,9 +98,10 @@ void main() {
         await tester.pumpWidget(numberSelector);
 
         await tester.tap(decrementFinder);
+        await tester.tap(minFinder);
         await tester.pump();
 
-        expect(callbackCounter, 0);
+        expect(updateCounter, 0);
       });
 
       testWidgets('do not exceed max when current is max', (tester) async {
@@ -88,8 +110,8 @@ void main() {
             child: NumberSelector(
               current: max,
               onUpdate: (value) {
-                callbackValue = value;
-                callbackCounter++;
+                updateValue = value;
+                updateCounter++;
               },
               min: min,
               max: max,
@@ -99,14 +121,15 @@ void main() {
         await tester.pumpWidget(numberSelector);
 
         await tester.tap(incrementFinder);
+        await tester.tap(maxFinder);
         await tester.pump();
 
-        expect(callbackCounter, 0);
+        expect(updateCounter, 0);
       });
     });
 
     group('text field', () {
-      testWidgets('updates current number by input', (tester) async {
+      testWidgets('updates on Enter', (tester) async {
         const input = 15;
         await tester.pumpWidget(numberSelector);
 
@@ -115,20 +138,32 @@ void main() {
         await tester.testTextInput.receiveAction(TextInputAction.done);
         await tester.pump();
 
-        expect(callbackCounter, 1);
-        expect(callbackValue, input);
+        expect(updateCounter, 1);
+        expect(updateValue, input);
       });
 
-      testWidgets('ignores same input', (tester) async {
-        const input = 10;
+      testWidgets('updates on losing focus', (tester) async {
+        const input = 15;
         await tester.pumpWidget(numberSelector);
 
         await tester.tap(inputFinder);
         await tester.enterText(inputFinder, '$input');
+        FocusManager.instance.primaryFocus!.unfocus();
+        await tester.pump();
+
+        expect(updateCounter, 1);
+        expect(updateValue, input);
+      });
+
+      testWidgets('ignores similar input', (tester) async {
+        await tester.pumpWidget(numberSelector);
+
+        await tester.tap(inputFinder);
+        await tester.enterText(inputFinder, '$current');
         await tester.testTextInput.receiveAction(TextInputAction.done);
         await tester.pump();
 
-        expect(callbackCounter, 0);
+        expect(updateCounter, 0);
       });
 
       testWidgets('ignores empty input', (tester) async {
@@ -139,7 +174,20 @@ void main() {
         await tester.testTextInput.receiveAction(TextInputAction.done);
         await tester.pump();
 
-        expect(callbackCounter, 0);
+        expect(updateCounter, 0);
+      });
+
+      testWidgets('resets on ESC', (tester) async {
+        const input = 15;
+        await tester.pumpWidget(numberSelector);
+
+        await tester.tap(inputFinder);
+        await tester.enterText(inputFinder, '$input');
+        await simulateKeyDownEvent(LogicalKeyboardKey.escape);
+        await tester.pump();
+
+        expect(updateCounter, 0);
+        expect(find.text('$current'), findsNWidgets(2));
       });
 
       testWidgets('updates to max when input exceeds max', (tester) async {
@@ -150,8 +198,8 @@ void main() {
         await tester.testTextInput.receiveAction(TextInputAction.done);
         await tester.pump();
 
-        expect(callbackCounter, 1);
-        expect(callbackValue, max);
+        expect(updateCounter, 1);
+        expect(updateValue, max);
       });
 
       testWidgets('updates to min when input exceeds min', (tester) async {
@@ -162,8 +210,8 @@ void main() {
         await tester.testTextInput.receiveAction(TextInputAction.done);
         await tester.pump();
 
-        expect(callbackCounter, 1);
-        expect(callbackValue, min);
+        expect(updateCounter, 1);
+        expect(updateValue, min);
       });
     });
   });
@@ -172,3 +220,5 @@ void main() {
 final inputFinder = find.byType(TextField);
 final incrementFinder = find.byKey(const Key('Increment'));
 final decrementFinder = find.byKey(const Key('Decrement'));
+final maxFinder = find.byKey(const Key('Max'));
+final minFinder = find.byKey(const Key('Min'));

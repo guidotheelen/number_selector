@@ -140,6 +140,7 @@ class _NumberSelectorState extends State<NumberSelector> {
         children: [
           if (widget.min != null) ...[
             _NaviagtionButton(
+              key: const Key('Min'),
               height: widget.height,
               width: widget.height,
               enabled: _isDecementEnabled,
@@ -150,13 +151,13 @@ class _NumberSelectorState extends State<NumberSelector> {
             _devider(),
           ],
           _NaviagtionButton(
+            key: const Key('Decrement'),
             height: widget.height,
             width: widget.height,
-            key: const Key('Decrement'),
             enabled: _isDecementEnabled,
             icon: const Icon(Icons.chevron_left),
             iconColor: widget.iconColor,
-            onPressed: () => _icrementDecrement(false),
+            onPressed: () => _incrementDecrement(false),
           ),
           _devider(),
           Expanded(
@@ -164,17 +165,18 @@ class _NumberSelectorState extends State<NumberSelector> {
           ),
           _devider(),
           _NaviagtionButton(
+            key: const Key('Increment'),
             height: widget.height,
             width: widget.height,
-            key: const Key('Increment'),
             enabled: _isIncrementEnabled,
             icon: const Icon(Icons.chevron_right),
             iconColor: widget.iconColor,
-            onPressed: () => _icrementDecrement(true),
+            onPressed: () => _incrementDecrement(true),
           ),
           if (widget.max != null) ...[
             _devider(),
             _NaviagtionButton(
+              key: const Key('Max'),
               height: widget.height,
               width: widget.height,
               enabled: _isIncrementEnabled,
@@ -250,7 +252,7 @@ class _NumberSelectorState extends State<NumberSelector> {
     });
   }
 
-  void _icrementDecrement(bool isIncrement) {
+  void _incrementDecrement(bool isIncrement) {
     setState(() {
       _current =
           _clamp(_parcedText + (isIncrement ? widget.step : -widget.step));
