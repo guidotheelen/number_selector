@@ -47,3 +47,7 @@
 ## 1.0.1
 
 * Add example
+
+## 1.0.2
+
+* Improve code

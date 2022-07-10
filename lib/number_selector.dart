@@ -140,7 +140,7 @@ class _NumberSelectorState extends State<NumberSelector> {
     _controller = TextEditingController(text: '${widget.current}');
 
     _focusNode.addListener(() {
-      if (!_focusNode.hasFocus && widget.enabled) _update();
+      if (!_focusNode.hasFocus && widget.enabled) _updateOrCancel(_parcedText);
     });
 
     _focusNode.onKeyEvent = (_, event) {
@@ -180,7 +180,7 @@ class _NumberSelectorState extends State<NumberSelector> {
               enabled: _isDecementEnabled,
               icon: Icon(widget.minIcon),
               iconColor: widget.iconColor,
-              onPressed: () => _minMax(true),
+              onPressed: () => _updateOrCancel(widget.min!),
             ),
             _divider(),
           ],
@@ -191,7 +191,7 @@ class _NumberSelectorState extends State<NumberSelector> {
             enabled: _isDecementEnabled,
             icon: Icon(widget.decrementIcon),
             iconColor: widget.iconColor,
-            onPressed: () => _incrementDecrement(false),
+            onPressed: () => _updateOrCancel(_parcedText - 1),
           ),
           _divider(),
           Expanded(
@@ -205,7 +205,7 @@ class _NumberSelectorState extends State<NumberSelector> {
             enabled: _isIncrementEnabled,
             icon: Icon(widget.incrementIcon),
             iconColor: widget.iconColor,
-            onPressed: () => _incrementDecrement(true),
+            onPressed: () => _updateOrCancel(_parcedText + 1),
           ),
           if (widget.max != null && widget.showMinMax) ...[
             _divider(),
@@ -216,7 +216,7 @@ class _NumberSelectorState extends State<NumberSelector> {
               enabled: _isIncrementEnabled,
               icon: Icon(widget.maxIcon),
               iconColor: widget.iconColor,
-              onPressed: () => _minMax(false),
+              onPressed: () => _updateOrCancel(widget.max!),
             ),
           ],
         ],
@@ -259,40 +259,26 @@ class _NumberSelectorState extends State<NumberSelector> {
         )
       : const SizedBox();
 
-  void _minMax(bool isMin) {
-    setState(() {
-      _current = (isMin ? widget.min : widget.max) ?? widget.current;
-      _controller.text = '$_current';
-      widget.onUpdate?.call(_parcedText);
-    });
+  void _updateOrCancel(int number) {
+    final clamped = _clamp(number);
+    _canUpdate(clamped) ? _update(clamped) : _cancel();
   }
 
-  void _incrementDecrement(bool isIncrement) {
+  bool _canUpdate(int number) => !_isCanceled && number != _current;
+
+  void _update(int number) {
     setState(() {
-      _current =
-          _clamp(_parcedText + (isIncrement ? widget.step : -widget.step));
-      _controller.text = '$_current';
-      widget.onUpdate?.call(_current);
+      _current = number;
+      _controller.text = '$number';
     });
+    widget.onUpdate?.call(_clamp(number));
   }
 
-  void _update() {
-    if (_isCanceled) {
+  void _cancel() {
+    setState(() {
       _isCanceled = false;
       _controller.text = '$_current';
-      return;
-    }
-    if (_clamp(_parcedText) == _current) {
-      _controller.text = '$_current';
-      return;
-    }
-    if (_controller.text.isEmpty) {
-      _controller.text = '$_parcedText';
-    } else {
-      _current = _clamp(_parcedText);
-      _controller.text = '$_current';
-      widget.onUpdate?.call(_current);
-    }
+    });
   }
 
   bool get _isDecementEnabled =>
