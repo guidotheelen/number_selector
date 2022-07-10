@@ -43,3 +43,7 @@
 * Only set state when needed
 * Additional tests
 * Code cleanup
+
+## 1.0.1
+
+* Add example
