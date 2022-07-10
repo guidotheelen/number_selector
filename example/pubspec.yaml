@@ -1,0 +1,14 @@
+name: NumberSelectorApp
+description: Number Selector App
+
+environment:
+  sdk: '>=2.12.0 <3.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  number_selector:
+    path: ../
+
+flutter:
+  uses-material-design: true
