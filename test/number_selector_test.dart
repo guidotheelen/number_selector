@@ -157,6 +157,66 @@ void main() {
         expect(maxFinder, findsNothing);
         expect(minFinder, findsNothing);
       });
+
+      group('when disabled', () {
+        setUp(() async {
+          updateCounter = 0;
+          updateValue = 0;
+          numberSelector = MaterialApp(
+            home: Material(
+              child: NumberSelector(
+                current: current,
+                min: min,
+                max: max,
+                onUpdate: (value) {
+                  updateValue = value;
+                  updateCounter++;
+                },
+                enabled: false,
+              ),
+            ),
+          );
+        });
+        testWidgets('do not increment', (tester) async {
+          await tester.pumpWidget(numberSelector);
+
+          await tester.tap(incrementFinder);
+          await tester.pump();
+
+          expect(updateCounter, 0);
+          expect(find.text('$current'), findsNWidgets(2));
+        });
+
+        testWidgets('do not update to max', (tester) async {
+          await tester.pumpWidget(numberSelector);
+
+          await tester.tap(maxFinder);
+          await tester.pump();
+
+          expect(updateCounter, 0);
+          expect(find.text('$current'), findsNWidgets(2));
+        });
+
+        testWidgets('do not decrement', (tester) async {
+          await tester.pumpWidget(numberSelector);
+
+          await tester.tap(decrementFinder);
+          await tester.pump();
+
+          expect(updateCounter, 0);
+          expect(find.text('$current'), findsNWidgets(2));
+        });
+
+        testWidgets('do update to min', (tester) async {
+          await tester.pumpWidget(numberSelector);
+
+          await tester.tap(minFinder);
+          await tester.pump();
+
+          expect(updateCounter, 0);
+          expect(find.text('$current'), findsNWidgets(2));
+        });
+      });
     });
 
     group('text field', () {
@@ -286,6 +346,28 @@ void main() {
 
         await tester.tap(inputFinder);
         await tester.enterText(inputFinder, 'a');
+        await tester.testTextInput.receiveAction(TextInputAction.done);
+        await tester.pump();
+
+        expect(updateCounter, 0);
+        expect(find.text('$current'), findsNWidgets(2));
+      });
+
+      testWidgets('is disabled', (tester) async {
+        numberSelector = const MaterialApp(
+          home: Material(
+            child: NumberSelector(
+              current: current,
+              max: 50,
+              min: 0,
+              enabled: false,
+            ),
+          ),
+        );
+        await tester.pumpWidget(numberSelector);
+
+        await tester.tap(inputFinder);
+        await tester.enterText(inputFinder, '25');
         await tester.testTextInput.receiveAction(TextInputAction.done);
         await tester.pump();
 
