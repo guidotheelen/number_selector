@@ -6,7 +6,7 @@
 
 - Increment and decrement buttons
 - Skip to first and last number buttons
-- Canel by pressing ESC
+- Cancel by pressing ESC
 - Update by pressing Enter or loosing focus
 - Negative and positive integers
 
