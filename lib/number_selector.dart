@@ -156,6 +156,15 @@ class _NumberSelectorState extends State<NumberSelector> {
   }
 
   @override
+  void didUpdateWidget(covariant NumberSelector oldWidget) {
+    if (oldWidget.current != widget.current) {
+      _current = widget.current;
+      _controller.text = '${widget.current}';
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       height: widget.height,

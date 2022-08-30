@@ -51,3 +51,7 @@
 ## 1.0.2
 
 * Improve code
+
+## 1.0.3
+
+* Add didUpdateWidget to update internal state
