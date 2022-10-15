@@ -55,3 +55,8 @@
 ## 1.0.3
 
 * Add didUpdateWidget to update internal state
+
+## 1.0.4
+
+* Borderless version
+* Hint text for buttons

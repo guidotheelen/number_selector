@@ -57,19 +57,9 @@ class MyHomePage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: Text('Basic number selector'),
             ),
-            NumberSelector(
-              height: 50,
-              width: 180,
-              current: 47,
-              backgroundColor: Colors.transparent,
-              incrementIcon: Icons.add,
-              decrementIcon: Icons.remove,
-              showSuffix: false,
-              hasBorder: false,
-              hasDividers: false,
-              hasCenteredText: true,
-              onUpdate: (val) {
-                print(val);
+            NumberSelector.borderless(
+              onUpdate: (number) {
+                print(number);
               },
             ),
           ],

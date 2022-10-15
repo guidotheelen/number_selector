@@ -92,6 +92,21 @@ class NumberSelector extends StatefulWidget {
   /// Default is 5.0 px
   final double verticalDividerPadding;
 
+  /// Tooltip for the increment button
+  final String? incrementTooltip;
+
+  /// Tooltip for the decrement button
+  final String? decrementTooltip;
+
+  /// Tooltip for the max button
+  final String? maxTooltip;
+
+  /// Tooltip for the min button
+  final String? minTooltip;
+
+  /// The TextStyle of the number
+  final TextStyle? textStyle;
+
   const NumberSelector({
     super.key,
     this.max,
@@ -120,7 +135,81 @@ class NumberSelector extends StatefulWidget {
     this.hasDividers = true,
     this.hasBorder = true,
     this.prefixNaming = 'of',
+    this.incrementTooltip = 'Increment',
+    this.decrementTooltip = 'Decrement',
+    this.maxTooltip = 'Max',
+    this.minTooltip = 'Min',
+    this.textStyle,
   });
+
+  factory NumberSelector.borderless({
+    Key? key,
+    int? max,
+    int? min,
+    int step = 1,
+    bool enabled = true,
+    Function(int number)? onUpdate,
+    int current = 0,
+    double height = 50.0,
+    double width = 200.0,
+    double contentPadding = 20.0,
+    double verticalDividerPadding = 5.0,
+    double borderRadius = 2.0,
+    Color borderColor = Colors.black26,
+    Color dividerColor = Colors.black12,
+    Color backgroundColor = Colors.transparent,
+    double borderWidth = 1.0,
+    Color iconColor = Colors.black54,
+    IconData incrementIcon = Icons.add,
+    IconData decrementIcon = Icons.remove,
+    IconData maxIcon = Icons.last_page,
+    IconData minIcon = Icons.first_page,
+    bool showMinMax = true,
+    bool showSuffix = true,
+    bool hasCenteredText = true,
+    bool hasDividers = false,
+    bool hasBorder = false,
+    String prefixNaming = 'of',
+    String? incrementTooltip,
+    String? decrementTooltip,
+    String? maxTooltip,
+    String? minTooltip,
+    TextStyle? textStyle,
+  }) =>
+      NumberSelector(
+        key: key,
+        max: max,
+        min: min,
+        step: step,
+        enabled: enabled,
+        onUpdate: onUpdate,
+        current: current,
+        height: height,
+        width: width,
+        contentPadding: contentPadding,
+        verticalDividerPadding: verticalDividerPadding,
+        borderRadius: borderRadius,
+        borderColor: borderColor,
+        dividerColor: dividerColor,
+        backgroundColor: backgroundColor,
+        borderWidth: borderWidth,
+        iconColor: iconColor,
+        incrementIcon: incrementIcon,
+        decrementIcon: decrementIcon,
+        maxIcon: maxIcon,
+        minIcon: minIcon,
+        showMinMax: showMinMax,
+        showSuffix: showSuffix,
+        hasCenteredText: hasCenteredText,
+        hasDividers: hasDividers,
+        hasBorder: hasBorder,
+        prefixNaming: prefixNaming,
+        incrementTooltip: incrementTooltip,
+        decrementTooltip: decrementTooltip,
+        maxTooltip: maxTooltip,
+        minTooltip: minTooltip,
+        textStyle: textStyle,
+      );
 
   @override
   State<NumberSelector> createState() => _NumberSelectorState();
@@ -190,6 +279,7 @@ class _NumberSelectorState extends State<NumberSelector> {
               icon: Icon(widget.minIcon),
               iconColor: widget.iconColor,
               onPressed: () => _updateOrCancel(widget.min!),
+              tooltip: widget.minTooltip,
             ),
             _divider(),
           ],
@@ -201,6 +291,7 @@ class _NumberSelectorState extends State<NumberSelector> {
             icon: Icon(widget.decrementIcon),
             iconColor: widget.iconColor,
             onPressed: () => _updateOrCancel(_parcedText - 1),
+            tooltip: widget.decrementTooltip,
           ),
           _divider(),
           Expanded(
@@ -215,6 +306,7 @@ class _NumberSelectorState extends State<NumberSelector> {
             icon: Icon(widget.incrementIcon),
             iconColor: widget.iconColor,
             onPressed: () => _updateOrCancel(_parcedText + 1),
+            tooltip: widget.incrementTooltip,
           ),
           if (widget.max != null && widget.showMinMax) ...[
             _divider(),
@@ -226,6 +318,7 @@ class _NumberSelectorState extends State<NumberSelector> {
               icon: Icon(widget.maxIcon),
               iconColor: widget.iconColor,
               onPressed: () => _updateOrCancel(widget.max!),
+              tooltip: widget.maxTooltip,
             ),
           ],
         ],
@@ -236,6 +329,7 @@ class _NumberSelectorState extends State<NumberSelector> {
   Widget _numberField() {
     var showSuffix = widget.max != null && widget.showSuffix;
     return TextField(
+      style: widget.textStyle,
       controller: _controller,
       focusNode: _focusNode,
       decoration: InputDecoration(
@@ -314,6 +408,7 @@ class _NaviagtionButton extends StatelessWidget {
   final void Function()? onPressed;
   final bool enabled;
   final Color iconColor;
+  final String? tooltip;
 
   const _NaviagtionButton({
     super.key,
@@ -323,6 +418,7 @@ class _NaviagtionButton extends StatelessWidget {
     required this.onPressed,
     required this.iconColor,
     this.enabled = true,
+    this.tooltip,
   });
 
   @override
@@ -337,6 +433,7 @@ class _NaviagtionButton extends StatelessWidget {
           onPressed: enabled ? onPressed : null,
           color: iconColor,
           disabledColor: Colors.black26,
+          tooltip: tooltip,
         ),
       ),
     );
