@@ -142,7 +142,7 @@ class NumberSelector extends StatefulWidget {
     this.textStyle,
   });
 
-  factory NumberSelector.borderless({
+  factory NumberSelector.plain({
     Key? key,
     int? max,
     int? min,

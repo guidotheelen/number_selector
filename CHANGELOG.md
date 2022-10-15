@@ -60,3 +60,8 @@
 
 * Borderless version
 * Hint text for buttons
+
+## 1.0.5
+
+* Renaming
+* Documentation

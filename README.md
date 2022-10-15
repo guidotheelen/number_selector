@@ -9,6 +9,7 @@
 - Cancel by pressing ESC
 - Update by pressing Enter or loosing focus
 - Negative and positive integers
+- Tooltips for buttons
 
 ### Number selector with minimum and maximum value
 
@@ -18,9 +19,9 @@
 
 ![Simple number selector](images/picker2.png)
 
-### Even simpler number selector
+### Plain number selector
 
-![Simpler number selector](images/picker3.png)
+![Plain number selector](images/picker3.png)
 
 ## Usage
 
@@ -32,5 +33,14 @@
     onUpdate: (number) {
       // Your magic here
     },
-  ),
+  );
+
+  NumberSelector.plain(
+    current: 47,
+    min: 1,
+    max: 50,
+    onUpdate: (number) {
+      // More magic here
+    },
+  );
 ```

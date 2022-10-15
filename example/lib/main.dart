@@ -57,7 +57,7 @@ class MyHomePage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: Text('Basic number selector'),
             ),
-            NumberSelector.borderless(
+            NumberSelector.plain(
               onUpdate: (number) {
                 print(number);
               },
