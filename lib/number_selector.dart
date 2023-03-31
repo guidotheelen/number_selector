@@ -5,6 +5,8 @@ import 'dart:math' show min, max;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'debouncer.dart';
+
 class NumberSelector extends StatefulWidget {
   /// Maximum selectable value
   final int? max;
@@ -107,6 +109,9 @@ class NumberSelector extends StatefulWidget {
   /// The TextStyle of the number
   final TextStyle? textStyle;
 
+  /// Delays the execution of the onUpdate callback
+  final Duration? debounceTime;
+
   const NumberSelector({
     super.key,
     this.max,
@@ -140,6 +145,7 @@ class NumberSelector extends StatefulWidget {
     this.maxTooltip = 'Max',
     this.minTooltip = 'Min',
     this.textStyle,
+    this.debounceTime,
   });
 
   factory NumberSelector.plain({
@@ -175,6 +181,7 @@ class NumberSelector extends StatefulWidget {
     String? maxTooltip,
     String? minTooltip,
     TextStyle? textStyle,
+    Duration? debounceDuration,
   }) =>
       NumberSelector(
         key: key,
@@ -209,6 +216,7 @@ class NumberSelector extends StatefulWidget {
         maxTooltip: maxTooltip,
         minTooltip: minTooltip,
         textStyle: textStyle,
+        debounceTime: debounceDuration,
       );
 
   @override
@@ -218,6 +226,7 @@ class NumberSelector extends StatefulWidget {
 class _NumberSelectorState extends State<NumberSelector> {
   late final FocusNode _focusNode;
   late final TextEditingController _controller;
+  late final Debouncer _debouncer;
 
   late int _current;
   bool _isCanceled = false;
@@ -227,6 +236,7 @@ class _NumberSelectorState extends State<NumberSelector> {
     _current = widget.current;
     _focusNode = FocusNode();
     _controller = TextEditingController(text: '${widget.current}');
+    _debouncer = Debouncer(duration: widget.debounceTime);
 
     _focusNode.addListener(() {
       if (!_focusNode.hasFocus && widget.enabled) _updateOrCancel(_parcedText);
@@ -370,12 +380,26 @@ class _NumberSelectorState extends State<NumberSelector> {
   bool _canUpdate(int number) => !_isCanceled && number != _current;
 
   void _update(int number) {
+    _updateState(number);
+    _updateCallBack(number);
+  }
+
+  void _updateState(int number) {
     setState(() {
       _current = number;
       _controller.text = '$number';
     });
-    widget.onUpdate?.call(_clamp(number));
   }
+
+  void _updateCallBack(int number) {
+    if (widget.debounceTime == null) {
+      _onUpdate(number);
+    } else {
+      _debouncer.run(() => _onUpdate(number));
+    }
+  }
+
+  _onUpdate(int number) => widget.onUpdate?.call(_clamp(number));
 
   void _cancel() {
     setState(() {

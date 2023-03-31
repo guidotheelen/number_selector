@@ -375,6 +375,38 @@ void main() {
         expect(find.text('$current'), findsNWidgets(2));
       });
     });
+
+    group('Debouncing', () {
+      testWidgets('waits for debounce time', (tester) async {
+        const debounceTime = Duration(milliseconds: 500);
+        const input = 15;
+        numberSelector = MaterialApp(
+          home: Material(
+            child: NumberSelector(
+              debounceTime: debounceTime,
+              onUpdate: (value) {
+                updateValue = value;
+                updateCounter++;
+              },
+            ),
+          ),
+        );
+        await tester.pumpWidget(numberSelector);
+
+        await tester.tap(inputFinder);
+        await tester.enterText(inputFinder, '$input');
+        await tester.testTextInput.receiveAction(TextInputAction.done);
+        await tester.pump();
+
+        expect(updateCounter, 0);
+        expect(updateValue, 0);
+
+        await tester.pumpAndSettle(debounceTime);
+
+        expect(updateCounter, 1);
+        expect(updateValue, input);
+      });
+    });
   });
 }
 

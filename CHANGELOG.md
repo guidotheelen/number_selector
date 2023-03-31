@@ -65,3 +65,7 @@
 
 * Renaming
 * Documentation
+
+## 1.0.6
+
+* Debounce input
