@@ -69,3 +69,7 @@
 ## 1.0.6
 
 * Debounce input
+
+## 1.0.7
+
+* Non-nullable update delay

@@ -1,18 +1,16 @@
 import 'package:flutter/foundation.dart';
 import 'dart:async';
 
-/// Delays the execution of an action.
+/// Delays the execution of an action by [duration].
 class Debouncer {
-  static const defaultDuration = Duration(milliseconds: 300);
-
-  final Duration? duration;
+  final Duration duration;
   Timer? _timer;
 
-  Debouncer({this.duration});
+  Debouncer({required this.duration});
 
   void run(VoidCallback action) {
     if (_timer?.isActive ?? false) _timer!.cancel();
-    _timer = Timer(duration ?? defaultDuration, action);
+    _timer = Timer(duration, action);
   }
 
   void dispose() {

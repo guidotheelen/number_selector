@@ -110,7 +110,7 @@ class NumberSelector extends StatefulWidget {
   final TextStyle? textStyle;
 
   /// Delays the execution of the onUpdate callback
-  final Duration? debounceTime;
+  final Duration delayUpdate;
 
   const NumberSelector({
     super.key,
@@ -145,7 +145,7 @@ class NumberSelector extends StatefulWidget {
     this.maxTooltip = 'Max',
     this.minTooltip = 'Min',
     this.textStyle,
-    this.debounceTime,
+    this.delayUpdate = Duration.zero,
   });
 
   factory NumberSelector.plain({
@@ -181,7 +181,7 @@ class NumberSelector extends StatefulWidget {
     String? maxTooltip,
     String? minTooltip,
     TextStyle? textStyle,
-    Duration? debounceDuration,
+    Duration delayUpdate = Duration.zero,
   }) =>
       NumberSelector(
         key: key,
@@ -216,7 +216,7 @@ class NumberSelector extends StatefulWidget {
         maxTooltip: maxTooltip,
         minTooltip: minTooltip,
         textStyle: textStyle,
-        debounceTime: debounceDuration,
+        delayUpdate: delayUpdate,
       );
 
   @override
@@ -236,7 +236,7 @@ class _NumberSelectorState extends State<NumberSelector> {
     _current = widget.current;
     _focusNode = FocusNode();
     _controller = TextEditingController(text: '${widget.current}');
-    _debouncer = Debouncer(duration: widget.debounceTime);
+    _debouncer = Debouncer(duration: widget.delayUpdate);
 
     _focusNode.addListener(() {
       if (!_focusNode.hasFocus && widget.enabled) _updateOrCancel(_parcedText);
@@ -392,7 +392,7 @@ class _NumberSelectorState extends State<NumberSelector> {
   }
 
   void _updateCallBack(int number) {
-    if (widget.debounceTime == null) {
+    if (widget.delayUpdate == Duration.zero) {
       _onUpdate(number);
     } else {
       _debouncer.run(() => _onUpdate(number));

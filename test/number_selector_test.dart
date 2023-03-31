@@ -383,7 +383,7 @@ void main() {
         numberSelector = MaterialApp(
           home: Material(
             child: NumberSelector(
-              debounceTime: debounceTime,
+              delayUpdate: debounceTime,
               onUpdate: (value) {
                 updateValue = value;
                 updateCounter++;
